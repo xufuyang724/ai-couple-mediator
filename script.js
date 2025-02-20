@@ -1,27 +1,40 @@
-function addEntry() {
-  const date = document.getElementById('date').value;
-  const entryText = document.getElementById('entry').value;
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const OpenAI = require("openai");
 
-  if (date && entryText) {
-    const diaryEntries = document.getElementById('diary-entries');
-    const entry = document.createElement('div');
-    entry.classList.add('entry');
+const app = express();
+const port = process.env.PORT || 3000; // 让 Railway 自动分配端口
 
-    const entryDate = document.createElement('h3');
-    entryDate.textContent = `日期: ${date}`;
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY, // 直接使用环境变量
+});
 
-    const entryContent = document.createElement('p');
-    entryContent.textContent = entryText;
+app.use(cors());
+app.use(bodyParser.json());
 
-    entry.appendChild(entryDate);
-    entry.appendChild(entryContent);
+app.post("/analyze", async (req, res) => {
+  const { inputA, inputB } = req.body;
 
-    diaryEntries.appendChild(entry);
+  const prompt = `
+    情侣A说: "${inputA}"
+    情侣B说: "${inputB}"
+    他们在争吵。作为一个专业的情感咨询师，请帮助他们找到矛盾点，并给出一份中立的调解方案，让他们更容易和解：
+    `;
 
-    // Clear input fields after submitting
-    document.getElementById('date').value = '';
-    document.getElementById('entry').value = '';
-  } else {
-    alert('请填写日期和日记内容');
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    res.json({ message: completion.choices[0].message.content });
+  } catch (error) {
+    console.error("AI 处理错误:", error);
+    res.status(500).json({ error: "AI 处理错误" });
   }
-}
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
