@@ -4,62 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI情侣调解</title>
-  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-100">
-<div id="app" class="flex justify-center items-center h-screen"></div>
-
-<script type="text/babel">
-  function App() {
-    const [inputA, setInputA] = React.useState("");
-    const [inputB, setInputB] = React.useState("");
-    const [response, setResponse] = React.useState("");
-
-    const handleSubmit = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ inputA, inputB }),
-        });
-        const data = await res.json();
-        setResponse(data.message);
-      } catch (error) {
-        console.error("Error:", error);
-        setResponse("服务器连接失败，请检查后端是否在运行。");
-      }
-    };
-
-    return (
-      <div className="bg-white p-6 rounded shadow-md w-96">
-        <h2 className="text-lg font-bold mb-4">AI情侣调解</h2>
-        <textarea
-          className="w-full p-2 border rounded mb-2"
-          placeholder="伴侣A的观点"
-          value={inputA}
-          onChange={(e) => setInputA(e.target.value)}
-        />
-        <textarea
-          className="w-full p-2 border rounded mb-2"
-          placeholder="伴侣B的观点"
-          value={inputB}
-          onChange={(e) => setInputB(e.target.value)}
-        />
-        <button
-          className="w-full bg-blue-500 text-white py-2 rounded"
-          onClick={handleSubmit}
-        >
-          生成调解方案
-        </button>
-        {response && <div className="mt-4 p-2 bg-gray-200 rounded">{response}</div>}
-      </div>
-    );
-  }
-
-  ReactDOM.render(<App />, document.getElementById("app"));
-</script>
+<body>
+<div class="container">
+  <h2>AI 情侣争吵调解</h2>
+  <textarea id="inputA" placeholder="输入情侣A的观点"></textarea>
+  <textarea id="inputB" placeholder="输入情侣B的观点"></textarea>
+  <button onclick="analyzeConflict()">生成调解方案</button>
+  <div id="result"></div>
+</div>
 </body>
 </html>
