@@ -1,0 +1,7 @@
+name = "ai-couple-mediator"
+main = "index.html"
+compatibility_date = "2024-02-20"
+
+[site]
+bucket = "./"
+entry-point = "."
